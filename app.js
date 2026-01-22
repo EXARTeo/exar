@@ -37,7 +37,7 @@
         },
         socials: {
             github: 'https://github.com/EXARTeo',
-            linkedin: 'https://www.linkedin.com/in/%CE%B8%CE%B5%CF%8C%CF%89%CF%81%CE%BF%CF%82-%CE%AD%CE%BE%CE%B1%CF%81%CF%87%CE%BF%CF%82-08a770391/',
+            linkedin: 'https://www.linkedin.com/in/θεόδωρος-έξαρχος-08a770391/',
             instagram: 'https://instagram.com/exartheo',
             email: 'exarchtheo@gmail.com'
         }
@@ -667,7 +667,7 @@ Full-Stack Developer & Informatics Student
                 return `<span class="info">Social Links:</span>
 
 GitHub:    <span class="link" data-url="${CONFIG.socials.github}">github.com/EXARTeo</span>
-LinkedIn:  <span class="link" data-url="${CONFIG.socials.linkedin}">linkedin.com/in/theodoros-exarchos</span>
+LinkedIn:  <span class="link" data-url="${CONFIG.socials.linkedin}">linkedin.com/in/θεόδωρος-έξαρχος-08a770391</span>
 Instagram: <span class="link" data-url="https://${CONFIG.socials.instagram.replace('https://', '')}">@exartheo</span>
 Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG.socials.email}</span>`;
             },
