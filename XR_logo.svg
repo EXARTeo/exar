@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 60" fill="none">
+  <!-- Graffiti-style XR logo -->
+  <defs>
+    <linearGradient id="graffiti" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#87cf3e"/>
+      <stop offset="100%" stop-color="#6fb32e"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- X letter - graffiti style -->
+  <g filter="url(#glow)">
+    <path d="M10 10 L25 30 L10 50 L18 50 L28 36 L38 50 L46 50 L31 30 L46 10 L38 10 L28 24 L18 10 Z"
+          fill="url(#graffiti)"
+          stroke="#ffffff"
+          stroke-width="0.5"/>
+
+    <!-- R letter - graffiti style -->
+    <path d="M54 10 L54 50 L62 50 L62 34 L72 34 L82 50 L92 50 L80 32 C86 30 90 25 90 20 C90 13 84 10 76 10 Z M62 17 L74 17 C80 17 82 19 82 22 C82 25 80 27 74 27 L62 27 Z"
+          fill="url(#graffiti)"
+          stroke="#ffffff"
+          stroke-width="0.5"/>
+  </g>
+
+  <!-- Decorative drips -->
+  <path d="M25 50 L25 55 Q25 58 23 58 Q21 58 21 55 L21 50" fill="#87cf3e" opacity="0.7"/>
+  <path d="M62 50 L62 53 Q62 55 61 55 Q60 55 60 53 L60 50" fill="#87cf3e" opacity="0.7"/>
+  <path d="M90 32 L92 38 Q92 40 91 40 Q90 40 90 38 L90 32" fill="#87cf3e" opacity="0.5"/>
+
+  <!-- Spray dots -->
+  <circle cx="5" cy="15" r="1" fill="#87cf3e" opacity="0.4"/>
+  <circle cx="8" cy="8" r="0.8" fill="#87cf3e" opacity="0.3"/>
+  <circle cx="100" cy="12" r="1" fill="#87cf3e" opacity="0.4"/>
+  <circle cx="95" cy="8" r="0.7" fill="#87cf3e" opacity="0.3"/>
+  <circle cx="103" cy="45" r="0.9" fill="#87cf3e" opacity="0.35"/>
+</svg>

@@ -3,1339 +3,405 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXAR | Developer</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #0d1117;
-            --bg-terminal: #0c0c0c;
-            --green-primary: #00ff41;
-            --green-secondary: #00cc33;
-            --green-dim: #00802b;
-            --green-glow: rgba(0, 255, 65, 0.3);
-            --text-primary: #e0e0e0;
-            --text-secondary: #808080;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Scanlines effect */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(0, 0, 0, 0.15),
-                rgba(0, 0, 0, 0.15) 1px,
-                transparent 1px,
-                transparent 2px
-            );
-            z-index: 9999;
-        }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid var(--green-dim);
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--green-primary);
-            text-shadow: 0 0 10px var(--green-glow);
-            letter-spacing: 3px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav-links a:hover {
-            color: var(--green-primary);
-            text-shadow: 0 0 10px var(--green-glow);
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--green-primary);
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .terminal-btn {
-            background: transparent;
-            border: 1px solid var(--green-primary);
-            color: var(--green-primary);
-            padding: 0.5rem 1rem;
-            font-family: inherit;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .terminal-btn:hover {
-            background: var(--green-primary);
-            color: var(--bg-primary);
-            box-shadow: 0 0 20px var(--green-glow);
-        }
-
-        .terminal-btn .icon {
-            font-size: 1rem;
-        }
-
-        /* Hero Section */
-        #hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem;
-            position: relative;
-        }
-
-        .hero-content {
-            z-index: 1;
-        }
-
-        .glitch-wrapper {
-            position: relative;
-        }
-
-        .glitch {
-            font-size: clamp(4rem, 15vw, 10rem);
-            font-weight: 700;
-            color: var(--green-primary);
-            text-shadow: 0 0 30px var(--green-glow);
-            letter-spacing: 0.5rem;
-            animation: flicker 3s infinite;
-        }
-
-        @keyframes flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                text-shadow:
-                    0 0 30px var(--green-glow),
-                    0 0 60px var(--green-glow);
-            }
-            20%, 24%, 55% {
-                text-shadow: none;
-            }
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            margin-top: 1rem;
-            letter-spacing: 0.2rem;
-        }
-
-        .typing-text {
-            color: var(--green-secondary);
-            margin-top: 2rem;
-            font-size: 1rem;
-        }
-
-        .typing-text::after {
-            content: '|';
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 2rem;
-            color: var(--green-dim);
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
-        }
-
-        /* Sections */
-        section {
-            padding: 6rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-header {
-            margin-bottom: 3rem;
-        }
-
-        .section-title {
-            font-size: 2rem;
-            color: var(--green-primary);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .section-title::before {
-            content: '>';
-            color: var(--green-secondary);
-        }
-
-        .section-path {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        /* About Section */
-        #about {
-            border-left: 2px solid var(--green-dim);
-            margin-left: 2rem;
-            padding-left: 3rem;
-        }
-
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-        }
-
-        @media (max-width: 768px) {
-            .about-content {
-                grid-template-columns: 1fr;
-            }
-            #about {
-                margin-left: 0;
-                padding-left: 2rem;
-            }
-        }
-
-        .about-text p {
-            margin-bottom: 1.5rem;
-            color: var(--text-primary);
-        }
-
-        .highlight {
-            color: var(--green-primary);
-            font-weight: 700;
-        }
-
-        .skills-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .skill-tag {
-            background: rgba(0, 255, 65, 0.1);
-            border: 1px solid var(--green-dim);
-            padding: 0.3rem 0.8rem;
-            font-size: 0.8rem;
-            color: var(--green-secondary);
-        }
-
-        /* Achievements Section */
-        #achievements {
-            background: var(--bg-secondary);
-            margin: 0;
-            max-width: 100%;
-            padding: 6rem 2rem;
-        }
-
-        #achievements .section-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .achievement-card {
-            background: var(--bg-primary);
-            border: 1px solid var(--green-dim);
-            padding: 2rem;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .achievement-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--green-primary);
-            transform: scaleY(0);
-            transition: transform 0.3s ease;
-        }
-
-        .achievement-card:hover {
-            border-color: var(--green-primary);
-            box-shadow: 0 0 30px rgba(0, 255, 65, 0.1);
-        }
-
-        .achievement-card:hover::before {
-            transform: scaleY(1);
-        }
-
-        .achievement-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .achievement-title {
-            color: var(--green-primary);
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .achievement-desc {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        /* Projects Section */
-        #projects .projects-hint {
-            background: rgba(0, 255, 65, 0.05);
-            border: 1px dashed var(--green-dim);
-            padding: 2rem;
-            text-align: center;
-            color: var(--text-secondary);
-        }
-
-        .projects-hint code {
-            color: var(--green-primary);
-            background: rgba(0, 255, 65, 0.1);
-            padding: 0.2rem 0.5rem;
-        }
-
-        /* Contact Section */
-        #contact {
-            text-align: center;
-        }
-
-        .contact-content {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .contact-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .contact-link {
-            color: var(--text-primary);
-            text-decoration: none;
-            padding: 1rem 2rem;
-            border: 1px solid var(--green-dim);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .contact-link:hover {
-            border-color: var(--green-primary);
-            color: var(--green-primary);
-            box-shadow: 0 0 20px var(--green-glow);
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 2rem;
-            border-top: 1px solid var(--green-dim);
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-        }
-
-        /* Terminal Overlay */
-        .terminal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 10000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-        }
-
-        .terminal-overlay.active {
-            display: flex;
-        }
-
-        .terminal-window {
-            width: 100%;
-            max-width: 900px;
-            height: 80vh;
-            background: var(--bg-terminal);
-            border: 1px solid var(--green-dim);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 0 50px rgba(0, 255, 65, 0.2);
-        }
-
-        .terminal-header {
-            background: #1a1a1a;
-            padding: 0.8rem 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--green-dim);
-        }
-
-        .terminal-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .terminal-btn-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .terminal-btn-dot.red { background: #ff5f56; }
-        .terminal-btn-dot.yellow { background: #ffbd2e; }
-        .terminal-btn-dot.green { background: #27ca40; }
-
-        .terminal-title {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-        }
-
-        .terminal-body {
-            padding: 1rem;
-            height: calc(100% - 50px);
-            overflow-y: auto;
-            font-size: 0.9rem;
-        }
-
-        .terminal-body::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .terminal-body::-webkit-scrollbar-track {
-            background: var(--bg-terminal);
-        }
-
-        .terminal-body::-webkit-scrollbar-thumb {
-            background: var(--green-dim);
-        }
-
-        .terminal-output {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .terminal-output .command {
-            color: var(--green-primary);
-        }
-
-        .terminal-output .path {
-            color: #5555ff;
-        }
-
-        .terminal-output .user {
-            color: var(--green-secondary);
-        }
-
-        .terminal-output .error {
-            color: #ff5555;
-        }
-
-        .terminal-output .success {
-            color: var(--green-primary);
-        }
-
-        .terminal-output .info {
-            color: var(--text-secondary);
-        }
-
-        .terminal-input-line {
-            display: flex;
-            align-items: center;
-            margin-top: 0.5rem;
-        }
-
-        .terminal-prompt {
-            color: var(--green-secondary);
-            margin-right: 0.5rem;
-            white-space: nowrap;
-        }
-
-        .terminal-prompt .path {
-            color: #5555ff;
-        }
-
-        .terminal-input {
-            background: transparent;
-            border: none;
-            color: var(--green-primary);
-            font-family: inherit;
-            font-size: inherit;
-            outline: none;
-            flex: 1;
-            caret-color: var(--green-primary);
-        }
-
-        /* Matrix rain background */
-        #matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.05;
-        }
-
-        /* Mobile menu */
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--green-primary);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: var(--bg-primary);
-                flex-direction: column;
-                padding: 1rem;
-                gap: 1rem;
-                border-bottom: 1px solid var(--green-dim);
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .terminal-btn {
-                position: fixed;
-                bottom: 1rem;
-                right: 1rem;
-                z-index: 999;
-                background: var(--bg-primary);
-            }
-        }
-    </style>
+    <meta name="description" content="Exarchos Theodoros - Full-Stack Developer & Informatics Student based in Athens, Greece">
+    <meta name="theme-color" content="#0d0d0d">
+    <title>Exarchos Theodoros | Full-Stack Developer</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <canvas id="matrix-bg"></canvas>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <!-- Navigation -->
-    <nav>
-        <div class="logo">&lt;EXAR/&gt;</div>
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
-        <div class="nav-links">
-            <a href="#hero">Home</a>
-            <a href="#about">About</a>
-            <a href="#achievements">Achievements</a>
-            <a href="#projects">Projects</a>
-            <a href="#contact">Contact</a>
-            <button class="terminal-btn" onclick="openTerminal()">
-                <span class="icon">⌘</span>
-                Terminal
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo" aria-label="Home">
+                <span class="logo-dot"></span>
+                <span class="logo-text">EXAR</span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="hamburger"></span>
             </button>
+            <ul class="nav-links" role="menubar">
+                <li role="none"><a href="#hero" role="menuitem" class="nav-link active">Home</a></li>
+                <li role="none"><a href="#timeline" role="menuitem" class="nav-link">Timeline</a></li>
+                <li role="none"><a href="#featured" role="menuitem" class="nav-link">Featured</a></li>
+                <li role="none"><a href="#wins" role="menuitem" class="nav-link">Wins</a></li>
+                <li role="none"><a href="#skills" role="menuitem" class="nav-link">Skills</a></li>
+                <li role="none"><a href="projects.html" role="menuitem" class="nav-link nav-link-page">Projects</a></li>
+            </ul>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section id="hero">
-        <div class="hero-content">
-            <div class="glitch-wrapper">
-                <h1 class="glitch">EXAR</h1>
-            </div>
-            <p class="subtitle">DEVELOPER // CREATOR // PROBLEM SOLVER</p>
-            <p class="typing-text" id="typing-text"></p>
-        </div>
-        <div class="scroll-indicator">▼ scroll down ▼</div>
-    </section>
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section id="hero" class="hero-section" aria-labelledby="hero-title">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <p class="hero-greeting">Hello, I'm</p>
+                        <h1 id="hero-title" class="hero-name">Exarchos Theodoros</h1>
+                        <p class="hero-tagline">
+                            <span class="age">21</span> · <span class="location">Athens, Greece</span>
+                        </p>
+                        <p class="hero-role">Full-Stack Developer & Informatics Student</p>
 
-    <!-- About Section -->
-    <section id="about">
-        <div class="section-header">
-            <h2 class="section-title">about_me</h2>
-            <span class="section-path">~/exar/about</span>
-        </div>
-        <div class="about-content">
-            <div class="about-text">
-                <p>
-                    Hey, I'm <span class="highlight">EXAR</span> — a Computer Science student
-                    with a passion for building things that live on the internet.
-                </p>
-                <p>
-                    Currently working as a <span class="highlight">freelance web developer</span>,
-                    teaming up with my friend <span class="highlight">Fotis</span> (the visual genius
-                    behind the camera) to deliver complete digital experiences for our clients.
-                </p>
-                <p>
-                    When I'm not coding for clients, you'll find me at hackathons,
-                    turning caffeine into working prototypes and occasionally winning.
-                </p>
-            </div>
-            <div class="about-skills">
-                <p style="color: var(--text-secondary); margin-bottom: 1rem;">$ cat skills.txt</p>
-                <div class="skills-list">
-                    <span class="skill-tag">JavaScript</span>
-                    <span class="skill-tag">TypeScript</span>
-                    <span class="skill-tag">React</span>
-                    <span class="skill-tag">Node.js</span>
-                    <span class="skill-tag">Python</span>
-                    <span class="skill-tag">C/C++</span>
-                    <span class="skill-tag">HTML/CSS</span>
-                    <span class="skill-tag">Git</span>
-                    <span class="skill-tag">Linux</span>
-                    <span class="skill-tag">Problem Solving</span>
+                        <div class="hero-actions">
+                            <a href="assets/Exarchos_Theodoros_CV.pdf" download class="btn btn-primary">
+                                <svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                Download CV
+                            </a>
+                            <div class="hero-socials">
+                                <a href="https://github.com/EXARTeo" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                    </svg>
+                                </a>
+                                <a href="https://www.linkedin.com/in/%CE%B8%CE%B5%CF%8C%CF%89%CF%81%CE%BF%CF%82-%CE%AD%CE%BE%CE%B1%CF%81%CF%87%CE%BF%CF%82-08a770391/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                                    </svg>
+                                </a>
+                                <a href="https://instagram.com/exartheo" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                    </svg>
+                                </a>
+                                <a href="mailto:exarchtheo@gmail.com" class="social-link" aria-label="Email">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                        <polyline points="22,6 12,13 2,6"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Photo Swipe Deck with peek effect -->
+                    <div class="hero-photo" aria-label="Photo gallery - swipe or drag to see more">
+                        <div class="photo-deck-wrapper">
+                            <div class="photo-deck" id="photoDeck"></div>
+                        </div>
+                        <button class="photo-reset" id="photoReset" aria-label="Reset photo stack" hidden>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="1 4 1 10 7 10"/>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                            </svg>
+                            Again
+                        </button>
+                        <p class="photo-hint">Swipe to see more</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Achievements Section -->
-    <section id="achievements">
-        <div class="section-content">
-            <div class="section-header">
-                <h2 class="section-title">achievements</h2>
-                <span class="section-path">~/exar/achievements</span>
+        <!-- Timeline Section -->
+        <section id="timeline" class="timeline-section" aria-labelledby="timeline-title">
+            <div class="container">
+                <div class="window-card">
+                    <div class="window-header">
+                        <div class="window-dots">
+                            <span class="dot dot-red"></span>
+                            <span class="dot dot-yellow"></span>
+                            <span class="dot dot-green"></span>
+                        </div>
+                        <span class="window-title">Timeline</span>
+                    </div>
+                    <div class="window-toolbar">
+                        <div class="timeline-toggle" role="tablist" aria-label="Timeline view toggle">
+                            <button role="tab" class="toggle-btn active" data-view="work" aria-selected="true">Work</button>
+                            <button role="tab" class="toggle-btn" data-view="education" aria-selected="false">Education</button>
+                        </div>
+                    </div>
+                    <div class="window-body" id="timeline-content">
+                        <!-- Work Timeline -->
+                        <div class="timeline-view timeline-work active" data-timeline="work">
+                            <div class="timeline-track">
+                                <article class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-date">2025 — Present</div>
+                                    <h3 class="timeline-role">Lab Assistant</h3>
+                                    <p class="timeline-company">DIT, NKUA</p>
+                                    <ul class="timeline-details">
+                                        <li>Delivered laboratory sessions for Introduction to Programming (C) for first-year students.</li>
+                                        <li>Supported students with debugging, core CS fundamentals, and structured problem solving.</li>
+                                    </ul>
+                                </article>
+                                <article class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-date">2025 — Present</div>
+                                    <h3 class="timeline-role">Freelance Web Developer</h3>
+                                    <p class="timeline-company">Self-employed</p>
+                                    <ul class="timeline-details">
+                                        <li>Acquired and managed 6 clients end-to-end: requirements, implementation, delivery, and iterations.</li>
+                                        <li>Built static, responsive websites. Clean structure and mobile-first layouts.</li>
+                                    </ul>
+                                </article>
+                                <article class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-date">2022 — 2025</div>
+                                    <h3 class="timeline-role">Seasonal Hospitality</h3>
+                                    <p class="timeline-company">Various Venues</p>
+                                    <ul class="timeline-details">
+                                        <li>High-volume summer venues: Nikos Pita Club (Syvota 2023–2025), Pachis Beach Bar (Thassos 2022).</li>
+                                    </ul>
+                                </article>
+                            </div>
+                        </div>
+                        <!-- Education Timeline -->
+                        <div class="timeline-view timeline-education" data-timeline="education">
+                            <div class="timeline-track">
+                                <article class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-date">2022 — 2026</div>
+                                    <h3 class="timeline-role">BSc Informatics & Telecommunications</h3>
+                                    <p class="timeline-company">NKUA</p>
+                                    <ul class="timeline-details">
+                                        <li>Expected Graduation: 2026</li>
+                                        <li>Current Average Grade: 8.0 / 10</li>
+                                    </ul>
+                                </article>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="achievements-grid">
-                <div class="achievement-card">
-                    <div class="achievement-icon">🏆</div>
-                    <h3 class="achievement-title">Cassini Greek Hackathon</h3>
-                    <p class="achievement-desc">
-                        Winner of the Cassini Hackathon Greece edition. Built innovative
-                        solutions using space data and satellite technology.
-                    </p>
-                </div>
-                <div class="achievement-card">
-                    <div class="achievement-icon">🤖</div>
-                    <h3 class="achievement-title">GENAI Summit</h3>
-                    <p class="achievement-desc">
-                        Recognized at the GENAI Summit for developing cutting-edge
-                        AI-powered applications and creative solutions.
-                    </p>
-                </div>
-                <div class="achievement-card">
-                    <div class="achievement-icon">💻</div>
-                    <h3 class="achievement-title">Freelance Developer</h3>
-                    <p class="achievement-desc">
-                        Building web solutions for clients alongside Fotis, combining
-                        code expertise with stunning visual content.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Projects Section -->
-    <section id="projects">
-        <div class="section-header">
-            <h2 class="section-title">my_projects</h2>
-            <span class="section-path">~/exar/projects</span>
-        </div>
-        <div class="projects-hint">
-            <p>Want to see my projects?</p>
-            <p style="margin-top: 1rem;">
-                Open the terminal and run <code>ls projects</code> or <code>cd projects</code>
-            </p>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact">
-        <div class="section-header">
-            <h2 class="section-title">contact</h2>
-            <span class="section-path">~/exar/contact</span>
-        </div>
-        <div class="contact-content">
-            <p>Ready to build something awesome together?<br>Let's connect.</p>
-            <div class="contact-links">
-                <a href="mailto:your@email.com" class="contact-link">
-                    ✉ Email
-                </a>
-                <a href="https://github.com/yourusername" class="contact-link" target="_blank">
-                    ⌥ GitHub
-                </a>
-                <a href="https://linkedin.com/in/yourusername" class="contact-link" target="_blank">
-                    ⌘ LinkedIn
-                </a>
+        <!-- Featured Projects Section -->
+        <section id="featured" class="featured-section" aria-labelledby="featured-title">
+            <div class="container">
+                <h2 id="featured-title" class="section-title">
+                    <span class="title-accent">//</span> Featured Projects
+                </h2>
+                <div class="featured-grid">
+                    <article class="project-card" data-repo="EXARTeo/Network_File_System-NFS" id="project-nfs">
+                        <div class="project-header">
+                            <svg class="project-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            <a href="https://github.com/EXARTeo/Network_File_System-NFS" target="_blank" rel="noopener noreferrer" class="project-link" aria-label="View on GitHub">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                    <polyline points="15 3 21 3 21 9"/>
+                                    <line x1="10" y1="14" x2="21" y2="3"/>
+                                </svg>
+                            </a>
+                        </div>
+                        <h3 class="project-title">Network File System (NFS)</h3>
+                        <p class="project-desc">C client/server file system over TCP sockets with command-driven sync operations (LIST/PULL/PUSH) and a multi-worker manager for concurrency.</p>
+                        <div class="project-meta">
+                            <span class="project-lang" data-lang="C"><span class="lang-dot"></span>C</span>
+                            <span class="project-stats">
+                                <span class="stat" data-stat="stars" title="Stars">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg>
+                                    <span class="stat-value">—</span>
+                                </span>
+                                <span class="stat" data-stat="forks" title="Forks">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>
+                                    <span class="stat-value">—</span>
+                                </span>
+                            </span>
+                        </div>
+                    </article>
+                    <article class="project-card" data-repo="EXARTeo/Neural-LSH" id="project-neural-lsh">
+                        <div class="project-header">
+                            <svg class="project-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            <a href="https://github.com/EXARTeo/Neural-LSH" target="_blank" rel="noopener noreferrer" class="project-link" aria-label="View on GitHub">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                    <polyline points="15 3 21 3 21 9"/>
+                                    <line x1="10" y1="14" x2="21" y2="3"/>
+                                </svg>
+                            </a>
+                        </div>
+                        <h3 class="project-title">Neural-LSH</h3>
+                        <p class="project-desc">Python/PyTorch pipeline that trains a model and builds an ANN index for approximate nearest-neighbor search using locality-sensitive hashing.</p>
+                        <div class="project-meta">
+                            <span class="project-lang" data-lang="Python"><span class="lang-dot"></span>Python</span>
+                            <span class="project-stats">
+                                <span class="stat" data-stat="stars" title="Stars">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg>
+                                    <span class="stat-value">—</span>
+                                </span>
+                                <span class="stat" data-stat="forks" title="Forks">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>
+                                    <span class="stat-value">—</span>
+                                </span>
+                            </span>
+                        </div>
+                    </article>
+                </div>
+                <div class="featured-cta">
+                    <a href="projects.html" class="btn btn-secondary">
+                        View All Projects
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </a>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- Wins Section -->
+        <section id="wins" class="wins-section" aria-labelledby="wins-title">
+            <div class="container">
+                <h2 id="wins-title" class="section-title">
+                    <span class="title-accent">//</span> Wins
+                </h2>
+                <div class="wins-grid">
+                    <article class="win-card">
+                        <div class="win-badge">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="8" r="6"/>
+                                <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+                            </svg>
+                        </div>
+                        <div class="win-content">
+                            <h3 class="win-title">Cassini Hackathon 2025</h3>
+                            <p class="win-subtitle">Winner — Greece</p>
+                            <p class="win-desc">Winner of the Cassini Hackathon Greece with the Crowdless team, developing a data-driven solution using space-related data to address overcrowding and urban mobility challenges.</p>
+                        </div>
+                    </article>
+                    <article class="win-card">
+                        <div class="win-badge">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="8" r="6"/>
+                                <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+                            </svg>
+                        </div>
+                        <div class="win-content">
+                            <h3 class="win-title">Gen AI Summit Hackathon 2025</h3>
+                            <p class="win-subtitle">Winner</p>
+                            <p class="win-desc">Winner of the GenAI Summit Hackathon for an MVP concept built with Lovable: clustered and labeled user reviews to surface recurring issues and a graph view of related problems, helping developers prioritize app improvements.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="skills-section" aria-labelledby="skills-title">
+            <div class="container">
+                <h2 id="skills-title" class="section-title">
+                    <span class="title-accent">//</span> Skills
+                </h2>
+                <div class="skills-compact">
+                    <div class="skill-group">
+                        <h3 class="skill-label">Languages</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">C</span>
+                            <span class="skill-tag">C++</span>
+                            <span class="skill-tag">Python</span>
+                            <span class="skill-tag">Assembly</span>
+                        </div>
+                    </div>
+                    <div class="skill-group">
+                        <h3 class="skill-label">Systems</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">Linux (POSIX)</span>
+                            <span class="skill-tag">Process/Thread Mgmt</span>
+                            <span class="skill-tag">File System</span>
+                        </div>
+                    </div>
+                    <div class="skill-group">
+                        <h3 class="skill-label">Web</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">HTML</span>
+                            <span class="skill-tag">CSS</span>
+                            <span class="skill-tag">JavaScript</span>
+                            <span class="skill-tag">Django</span>
+                        </div>
+                    </div>
+                    <div class="skill-group">
+                        <h3 class="skill-label">Data & Tools</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">MySQL</span>
+                            <span class="skill-tag">MATLAB</span>
+                            <span class="skill-tag">Git/GitHub</span>
+                            <span class="skill-tag">LaTeX</span>
+                        </div>
+                    </div>
+                    <div class="skill-group">
+                        <h3 class="skill-label">Spoken</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">Greek (native)</span>
+                            <span class="skill-tag">English (fluent)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- Footer -->
-    <footer>
-        <p>© 2024 EXAR | Built with code and caffeine</p>
-        <p style="margin-top: 0.5rem; color: var(--green-dim);">
-            Try the terminal → type <span style="color: var(--green-primary);">help</span> to get started
-        </p>
+    <footer class="footer" role="contentinfo">
+        <div class="footer-wall">
+            <img src="assets/XR_logo.svg" alt="XR graffiti logo" class="footer-logo" onerror="this.style.display='none'">
+            <div class="footer-content">
+                <div class="footer-socials">
+                    <a href="https://github.com/EXARTeo" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                    <a href="https://www.linkedin.com/in/%CE%B8%CE%B5%CF%8C%CF%89%CF%81%CE%BF%CF%82-%CE%AD%CE%BE%CE%B1%CF%81%CF%87%CE%BF%CF%82-08a770391/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                        </svg>
+                    </a>
+                    <a href="https://instagram.com/exartheo" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                    </a>
+                    <a href="mailto:exarchtheo@gmail.com" aria-label="Email">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                    </a>
+                </div>
+                <p class="footer-tagline">build with frape and code</p>
+                <p class="footer-copy">&copy; 2025 Exarchos Theodoros</p>
+            </div>
+        </div>
     </footer>
 
-    <!-- Terminal Overlay -->
-    <div class="terminal-overlay" id="terminal-overlay">
-        <div class="terminal-window">
-            <div class="terminal-header">
-                <div class="terminal-buttons">
-                    <div class="terminal-btn-dot red" onclick="closeTerminal()"></div>
-                    <div class="terminal-btn-dot yellow"></div>
-                    <div class="terminal-btn-dot green"></div>
-                </div>
-                <span class="terminal-title">exar@portfolio:~</span>
-                <div style="width: 52px;"></div>
+    <!-- Terminal Launcher -->
+    <button class="terminal-launcher" id="terminalLauncher" aria-label="Open terminal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="4 17 10 11 4 5"/>
+            <line x1="12" y1="19" x2="20" y2="19"/>
+        </svg>
+    </button>
+
+    <!-- Terminal Widget -->
+    <div class="terminal-window" id="terminalWindow" role="dialog" aria-label="Terminal" aria-hidden="true">
+        <div class="terminal-header" id="terminalHeader">
+            <div class="terminal-buttons">
+                <button class="terminal-btn terminal-close" id="terminalClose" aria-label="Close terminal"></button>
+                <button class="terminal-btn terminal-minimize" id="terminalMinimize" aria-label="Minimize terminal"></button>
+                <span class="terminal-btn terminal-maximize"></span>
             </div>
-            <div class="terminal-body" id="terminal-body">
-                <div class="terminal-output" id="terminal-output"></div>
-                <div class="terminal-input-line">
-                    <span class="terminal-prompt" id="terminal-prompt">
-                        <span class="user">exar</span>@<span class="user">portfolio</span>:<span class="path">~</span>$
-                    </span>
-                    <input type="text" class="terminal-input" id="terminal-input" autofocus autocomplete="off" spellcheck="false">
-                </div>
+            <span class="terminal-title" id="terminalTitle">exar@portfolio:~</span>
+        </div>
+        <div class="terminal-body" id="terminalBody">
+            <div class="terminal-output" id="terminalOutput" aria-live="polite"></div>
+            <div class="terminal-input-line">
+                <span class="terminal-prompt" id="terminalPrompt">exar@portfolio:~$</span>
+                <input type="text" class="terminal-input" id="terminalInput" aria-label="Terminal command input" autocomplete="off" spellcheck="false">
             </div>
         </div>
     </div>
 
-    <script>
-        // Typing effect
-        const typingTexts = [
-            "$ building the future, one line at a time...",
-            "$ turning ideas into reality...",
-            "$ console.log('Hello, World!');",
-            "$ hackathon champion...",
-            "$ freelance web developer..."
-        ];
-        let textIndex = 0;
-        let charIndex = 0;
-        const typingElement = document.getElementById('typing-text');
-
-        function typeText() {
-            if (charIndex < typingTexts[textIndex].length) {
-                typingElement.textContent += typingTexts[textIndex].charAt(charIndex);
-                charIndex++;
-                setTimeout(typeText, 50);
-            } else {
-                setTimeout(eraseText, 2000);
-            }
-        }
-
-        function eraseText() {
-            if (charIndex > 0) {
-                typingElement.textContent = typingTexts[textIndex].substring(0, charIndex - 1);
-                charIndex--;
-                setTimeout(eraseText, 30);
-            } else {
-                textIndex = (textIndex + 1) % typingTexts.length;
-                setTimeout(typeText, 500);
-            }
-        }
-
-        typeText();
-
-        // Matrix background
-        const canvas = document.getElementById('matrix-bg');
-        const ctx = canvas.getContext('2d');
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const chars = 'EXAR01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops = [];
-
-        for (let i = 0; i < columns; i++) {
-            drops[i] = Math.random() * canvas.height / fontSize;
-        }
-
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#00ff41';
-            ctx.font = fontSize + 'px monospace';
-
-            for (let i = 0; i < drops.length; i++) {
-                const char = chars[Math.floor(Math.random() * chars.length)];
-                ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-
-        setInterval(drawMatrix, 50);
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        // Mobile menu
-        function toggleMobileMenu() {
-            document.querySelector('.nav-links').classList.toggle('active');
-        }
-
-        // Terminal functionality
-        const terminalOverlay = document.getElementById('terminal-overlay');
-        const terminalOutput = document.getElementById('terminal-output');
-        const terminalInput = document.getElementById('terminal-input');
-        const terminalPrompt = document.getElementById('terminal-prompt');
-        const terminalBody = document.getElementById('terminal-body');
-
-        let currentPath = '~';
-        let commandHistory = [];
-        let historyIndex = -1;
-
-        const fileSystem = {
-            '~': {
-                type: 'dir',
-                contents: ['about', 'projects', 'achievements', 'contact', 'skills.txt', 'README.md']
-            },
-            '~/about': {
-                type: 'dir',
-                contents: ['bio.txt', 'education.txt']
-            },
-            '~/projects': {
-                type: 'dir',
-                contents: ['hackathon-winner.md', 'freelance-work.md', 'personal-projects.md']
-            },
-            '~/achievements': {
-                type: 'dir',
-                contents: ['cassini-hackathon.txt', 'genai-summit.txt']
-            },
-            '~/contact': {
-                type: 'dir',
-                contents: ['email.txt', 'social.txt']
-            }
-        };
-
-        const files = {
-            '~/skills.txt': `
-== TECHNICAL SKILLS ==
-
-Languages:    JavaScript, TypeScript, Python, C/C++
-Frontend:     React, HTML5, CSS3, Tailwind
-Backend:      Node.js, Express, REST APIs
-Tools:        Git, Linux, VS Code, Docker
-Databases:    MongoDB, PostgreSQL, MySQL
-Other:        Problem Solving, Team Collaboration
-`,
-            '~/README.md': `
-# EXAR - Developer Portfolio
-
-Welcome to my portfolio terminal!
-
-Run 'help' to see available commands.
-Run 'cd <directory>' to navigate.
-Run 'cat <file>' to read files.
-
-> "Code is poetry written in logic"
-`,
-            '~/about/bio.txt': `
-=== BIO ===
-
-Name:       EXAR
-Role:       Developer / CS Student / Freelancer
-Location:   Greece
-
-I'm a passionate developer who loves turning ideas
-into reality through code. Currently studying
-Computer Science while freelancing with my friend
-Fotis (photographer) to create complete digital
-experiences for clients.
-`,
-            '~/about/education.txt': `
-=== EDUCATION ===
-
-📚 Computer Science (Ongoing)
-   Focus: Software Development, AI/ML
-
-🏆 Self-taught expertise in:
-   - Web Development
-   - Problem Solving
-   - System Design
-`,
-            '~/projects/hackathon-winner.md': `
-# Hackathon Projects
-
-## Cassini Greek Hackathon 🏆
-- Used satellite data APIs
-- Built innovative geospatial solutions
-- Won against competitive teams
-
-## GENAI Summit 🤖
-- Developed AI-powered applications
-- Explored cutting-edge GenAI tools
-- Recognized for creative solutions
-`,
-            '~/projects/freelance-work.md': `
-# Freelance Work
-
-Working with Fotis (Photographer) to deliver:
-
-✓ Modern, responsive websites
-✓ E-commerce solutions
-✓ Portfolio sites for creatives
-✓ Custom web applications
-
-Our combo: Clean code + Stunning visuals
-`,
-            '~/projects/personal-projects.md': `
-# Personal Projects
-
-[More projects coming soon...]
-
-Check my GitHub for the latest work!
-Type 'social' to find my links.
-`,
-            '~/achievements/cassini-hackathon.txt': `
-🏆 CASSINI GREEK HACKATHON - WINNER
-
-Challenge: Build innovative solutions using
-          space data and satellite technology
-
-Our Solution: [Project details here]
-
-Key Technologies:
-- Geospatial APIs
-- Data visualization
-- Web technologies
-
-This win showcases the ability to rapidly
-prototype and deliver under pressure.
-`,
-            '~/achievements/genai-summit.txt': `
-🤖 GENAI SUMMIT - WINNER
-
-Event: Generative AI focused hackathon
-
-Achievement: Recognized for developing
-cutting-edge AI-powered applications
-
-Focus Areas:
-- Large Language Models
-- AI Integration
-- Creative Problem Solving
-`,
-            '~/contact/email.txt': `
-📧 EMAIL
-
-For business inquiries:
-your@email.com
-
-Response time: Usually within 24 hours
-`,
-            '~/contact/social.txt': `
-🔗 SOCIAL LINKS
-
-GitHub:   github.com/yourusername
-LinkedIn: linkedin.com/in/yourusername
-Twitter:  @yourusername
-
-Feel free to connect!
-`
-        };
-
-        function openTerminal() {
-            terminalOverlay.classList.add('active');
-            terminalInput.focus();
-            if (terminalOutput.innerHTML === '') {
-                printWelcome();
-            }
-        }
-
-        function closeTerminal() {
-            terminalOverlay.classList.remove('active');
-        }
-
-        function printWelcome() {
-            const welcome = `
-<span class="success">
- ███████╗██╗  ██╗ █████╗ ██████╗
- ██╔════╝╚██╗██╔╝██╔══██╗██╔══██╗
- █████╗   ╚███╔╝ ███████║██████╔╝
- ██╔══╝   ██╔██╗ ██╔══██║██╔══██╗
- ███████╗██╔╝ ██╗██║  ██║██║  ██║
- ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
-</span>
-<span class="info">Welcome to EXAR's Portfolio Terminal v1.0</span>
-<span class="info">Type 'help' to see available commands.</span>
-
-`;
-            terminalOutput.innerHTML = welcome;
-        }
-
-        function updatePrompt() {
-            terminalPrompt.innerHTML = `<span class="user">exar</span>@<span class="user">portfolio</span>:<span class="path">${currentPath}</span>$`;
-        }
-
-        function resolvePath(path) {
-            if (path.startsWith('~/') || path === '~') {
-                return path;
-            }
-            if (path.startsWith('/')) {
-                return '~' + path;
-            }
-            if (currentPath === '~') {
-                return '~/' + path;
-            }
-            return currentPath + '/' + path;
-        }
-
-        function executeCommand(cmd) {
-            const parts = cmd.trim().split(/\s+/);
-            const command = parts[0].toLowerCase();
-            const args = parts.slice(1);
-
-            let output = '';
-
-            switch (command) {
-                case '':
-                    break;
-
-                case 'help':
-                    output = `
-<span class="success">Available Commands:</span>
-
-  <span class="command">help</span>          - Show this help message
-  <span class="command">ls [dir]</span>      - List directory contents
-  <span class="command">cd <dir></span>      - Change directory
-  <span class="command">cat <file></span>    - Display file contents
-  <span class="command">pwd</span>           - Print working directory
-  <span class="command">clear</span>         - Clear the terminal
-  <span class="command">whoami</span>        - Display user info
-  <span class="command">date</span>          - Show current date
-  <span class="command">goto <section></span> - Navigate to website section
-  <span class="command">social</span>        - Show social links
-  <span class="command">skills</span>        - Display skills
-  <span class="command">exit</span>          - Close terminal
-
-<span class="info">Directories: about, projects, achievements, contact</span>
-`;
-                    break;
-
-                case 'ls':
-                    const lsPath = args[0] ? resolvePath(args[0]) : currentPath;
-                    if (fileSystem[lsPath]) {
-                        output = fileSystem[lsPath].contents.map(item => {
-                            const fullPath = lsPath === '~' ? '~/' + item : lsPath + '/' + item;
-                            if (fileSystem[fullPath]) {
-                                return `<span class="path">${item}/</span>`;
-                            }
-                            return `<span class="info">${item}</span>`;
-                        }).join('  ');
-                    } else {
-                        output = `<span class="error">ls: cannot access '${args[0]}': No such file or directory</span>`;
-                    }
-                    break;
-
-                case 'cd':
-                    if (!args[0] || args[0] === '~') {
-                        currentPath = '~';
-                        updatePrompt();
-                    } else if (args[0] === '..') {
-                        if (currentPath !== '~') {
-                            const parts = currentPath.split('/');
-                            parts.pop();
-                            currentPath = parts.join('/') || '~';
-                            updatePrompt();
-                        }
-                    } else {
-                        const newPath = resolvePath(args[0]);
-                        if (fileSystem[newPath]) {
-                            currentPath = newPath;
-                            updatePrompt();
-                            // Navigate to section
-                            const section = args[0].replace('~/', '').replace('/', '');
-                            const sectionEl = document.getElementById(section);
-                            if (sectionEl) {
-                                closeTerminal();
-                                setTimeout(() => {
-                                    sectionEl.scrollIntoView({ behavior: 'smooth' });
-                                }, 100);
-                                output = `<span class="success">Navigating to ${section}...</span>`;
-                            }
-                        } else {
-                            output = `<span class="error">cd: no such directory: ${args[0]}</span>`;
-                        }
-                    }
-                    break;
-
-                case 'cat':
-                    if (!args[0]) {
-                        output = `<span class="error">cat: missing file operand</span>`;
-                    } else {
-                        const filePath = resolvePath(args[0]);
-                        if (files[filePath]) {
-                            output = `<span class="info">${files[filePath]}</span>`;
-                        } else {
-                            output = `<span class="error">cat: ${args[0]}: No such file</span>`;
-                        }
-                    }
-                    break;
-
-                case 'pwd':
-                    output = currentPath.replace('~', '/home/exar');
-                    break;
-
-                case 'clear':
-                    terminalOutput.innerHTML = '';
-                    return;
-
-                case 'whoami':
-                    output = `<span class="success">EXAR</span> - CS Student | Web Developer | Hackathon Winner`;
-                    break;
-
-                case 'date':
-                    output = new Date().toString();
-                    break;
-
-                case 'goto':
-                    const sections = ['hero', 'about', 'achievements', 'projects', 'contact'];
-                    if (sections.includes(args[0])) {
-                        closeTerminal();
-                        setTimeout(() => {
-                            document.getElementById(args[0]).scrollIntoView({ behavior: 'smooth' });
-                        }, 100);
-                        output = `<span class="success">Navigating to ${args[0]}...</span>`;
-                    } else {
-                        output = `<span class="error">goto: unknown section '${args[0]}'</span>
-<span class="info">Available: ${sections.join(', ')}</span>`;
-                    }
-                    break;
-
-                case 'social':
-                    output = `
-<span class="success">Social Links:</span>
-
-  GitHub:    <span class="command">github.com/yourusername</span>
-  LinkedIn:  <span class="command">linkedin.com/in/yourusername</span>
-  Email:     <span class="command">your@email.com</span>
-`;
-                    break;
-
-                case 'skills':
-                    output = `
-<span class="success">Technical Skills:</span>
-
-  Languages:  JavaScript, TypeScript, Python, C/C++
-  Frontend:   React, HTML5, CSS3, Tailwind
-  Backend:    Node.js, Express, REST APIs
-  Tools:      Git, Linux, Docker, VS Code
-`;
-                    break;
-
-                case 'exit':
-                case 'quit':
-                    closeTerminal();
-                    return;
-
-                case 'sudo':
-                    output = `<span class="error">Nice try! But you don't have sudo access here 😉</span>`;
-                    break;
-
-                case 'rm':
-                    output = `<span class="error">Permission denied: This is a read-only portfolio!</span>`;
-                    break;
-
-                case 'neofetch':
-                case 'screenfetch':
-                    output = `
-<span class="success">        _______        </span>   <span class="command">exar</span>@<span class="command">portfolio</span>
-<span class="success">       /       \\       </span>   ----------------
-<span class="success">      /  EXAR   \\      </span>   <span class="success">OS:</span> PortfolioOS
-<span class="success">     /___________\\     </span>   <span class="success">Host:</span> The Internet
-<span class="success">     |  |     |  |     </span>   <span class="success">Uptime:</span> 24/7
-<span class="success">     |__|     |__|     </span>   <span class="success">Shell:</span> exar-sh
-<span class="success">                       </span>   <span class="success">Theme:</span> Matrix Green
-`;
-                    break;
-
-                case 'hack':
-                case 'hacker':
-                    output = `<span class="success">Initializing hack sequence...</span>
-<span class="info">Just kidding! This is a portfolio, not a hacking tool 😄</span>`;
-                    break;
-
-                case 'coffee':
-                    output = `<span class="info">
-   ( (
-    ) )
-  ........
-  |      |]
-  \\      /
-   '----'
-
-Brewing... ☕ Fuel for coding!</span>`;
-                    break;
-
-                default:
-                    output = `<span class="error">Command not found: ${command}</span>
-<span class="info">Type 'help' for available commands.</span>`;
-            }
-
-            if (output) {
-                terminalOutput.innerHTML += output + '\n\n';
-            }
-        }
-
-        function processCommand() {
-            const cmd = terminalInput.value;
-            if (cmd.trim()) {
-                commandHistory.unshift(cmd);
-                historyIndex = -1;
-            }
-
-            // Add command to output
-            terminalOutput.innerHTML += `<span class="user">exar</span>@<span class="user">portfolio</span>:<span class="path">${currentPath}</span>$ <span class="command">${cmd}</span>\n`;
-
-            executeCommand(cmd);
-            terminalInput.value = '';
-            terminalBody.scrollTop = terminalBody.scrollHeight;
-        }
-
-        terminalInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                processCommand();
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                if (historyIndex < commandHistory.length - 1) {
-                    historyIndex++;
-                    terminalInput.value = commandHistory[historyIndex];
-                }
-            } else if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                if (historyIndex > 0) {
-                    historyIndex--;
-                    terminalInput.value = commandHistory[historyIndex];
-                } else if (historyIndex === 0) {
-                    historyIndex = -1;
-                    terminalInput.value = '';
-                }
-            } else if (e.key === 'Tab') {
-                e.preventDefault();
-                // Simple tab completion
-                const input = terminalInput.value;
-                const parts = input.split(' ');
-                const lastPart = parts[parts.length - 1];
-
-                const allItems = [...(fileSystem[currentPath]?.contents || [])];
-                const matches = allItems.filter(item => item.startsWith(lastPart));
-
-                if (matches.length === 1) {
-                    parts[parts.length - 1] = matches[0];
-                    terminalInput.value = parts.join(' ');
-                }
-            } else if (e.key === 'l' && e.ctrlKey) {
-                e.preventDefault();
-                executeCommand('clear');
-            }
-        });
-
-        terminalOverlay.addEventListener('click', (e) => {
-            if (e.target === terminalOverlay) {
-                closeTerminal();
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && terminalOverlay.classList.contains('active')) {
-                closeTerminal();
-            }
-            // Open terminal with Ctrl+`
-            if (e.key === '`' && e.ctrlKey) {
-                e.preventDefault();
-                if (terminalOverlay.classList.contains('active')) {
-                    closeTerminal();
-                } else {
-                    openTerminal();
-                }
-            }
-        });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
