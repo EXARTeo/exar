@@ -352,7 +352,8 @@ body::before {
    ============================================ */
 
 .hero-section {
-    min-height: 100vh;
+    min-height: auto;
+    /* min-height: 100vh; maybe try this later.. */
     display: flex;
     align-items: center;
     padding: calc(var(--nav-height) + var(--space-2xl)) 0 var(--space-2xl);
