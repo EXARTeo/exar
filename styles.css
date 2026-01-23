@@ -468,6 +468,7 @@ body::before {
     touch-action: none;
     user-select: none;
     transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.3s ease;
+    transform-origin: center center;        /* TODO maybe don't need */
 }
 
 .photo-card:active {
