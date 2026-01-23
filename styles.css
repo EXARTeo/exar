@@ -522,6 +522,11 @@ body::before {
     font-size: 12px;
     cursor: pointer;
     transition: all var(--transition-fast);
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+    transform: translateX(-50%);
+    z-index: 10;
 }
 
 .photo-reset:hover {
