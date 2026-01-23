@@ -229,20 +229,28 @@
                     card.style.display = '';
                     card.style.zIndex = cards.length - offset;
 
-                    // Peek effect: alternate left/right for stacked cards
+                    // Peek + tilt effect: alternate left/right with small rotation for a more natural stack
+                    const PEEK_BASE = 22;   // peek of the 2nd card(px)
+                    const PEEK_STEP = 6;    // the decrease of the peekness by step
+                    const ROT_BASE  = 6;    // tilt of the 2nd card
+                    const ROT_STEP  = 1.5;  // the decrease of the titlness by step
+
                     if (offset === 0) {
                         card.style.transform = 'translate(-50%, -50%)';
                         card.style.opacity = '1';
-                    } else if (offset === 1) {
-                        card.style.transform = 'translate(-50%, -50%) translateX(-12px) scale(0.95)';
-                        card.style.opacity = '0.7';
-                    } else if (offset === 2) {
-                        card.style.transform = 'translate(-50%, -50%) translateX(12px) scale(0.9)';
-                        card.style.opacity = '0.5';
                     } else {
-                        card.style.transform = `translate(-50%, -50%) scale(${1 - offset * 0.05})`;
+                        const dir = (offset % 2 === 1) ? -1 : 1;
+
+                        const peek  = Math.max(0, PEEK_BASE - (offset - 1) * PEEK_STEP);
+                        const rot   = Math.max(0, ROT_BASE  - (offset - 1) * ROT_STEP);
+                        const scale = Math.max(0.78, 1 - offset * 0.05);
+
+                        card.style.transform =
+                            `translate(-50%, -50%) translateX(${dir * peek}px) rotate(${dir * rot}deg) scale(${scale})`;
+
                         card.style.opacity = `${Math.max(0.2, 1 - offset * 0.2)}`;
                     }
+
                 }
             });
         }
