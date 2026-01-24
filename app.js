@@ -504,6 +504,7 @@
         const header = $('#terminalHeader');
         const closeBtn = $('#terminalClose');
         const minimizeBtn = $('#terminalMinimize');
+        const exitBtn = $('#terminalExit');
         const output = $('#terminalOutput');
         const input = $('#terminalInput');
         const promptEl = $('#terminalPrompt');
@@ -733,7 +734,7 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
             },
 
             exit: () => {
-                closeTerminal();
+                exitTerminal();
                 return null;
             },
 
@@ -811,6 +812,30 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
             terminal.setAttribute('aria-hidden', 'true');
             launcher.classList.remove('hidden');
             localStorage.setItem(CONFIG.storage.terminalOpen, 'false');
+        }
+
+        function exitTerminal() {
+            // Clear terminal DOM output
+            output.innerHTML = '';
+
+            // Reset in-memory state
+            commandHistory = [];
+            historyIndex = -1;
+            cwd = '/';
+            updatePrompt();
+
+            // Reset minimized state visually
+            terminal.classList.remove('minimized');
+
+            // Clear localStorage keys (keep position)
+            localStorage.removeItem(CONFIG.storage.terminalOutput);
+            localStorage.removeItem(CONFIG.storage.terminalHistory);
+            localStorage.removeItem(CONFIG.storage.terminalCwd);
+            localStorage.removeItem(CONFIG.storage.bannerShown);
+            localStorage.removeItem(CONFIG.storage.terminalMinimized);
+
+            // Close the terminal
+            closeTerminal();
         }
 
         function toggleMinimize() {
@@ -925,6 +950,7 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
         launcher?.addEventListener('click', openTerminal);
         closeBtn?.addEventListener('click', closeTerminal);
         minimizeBtn?.addEventListener('click', toggleMinimize);
+        exitBtn?.addEventListener('click', exitTerminal);
 
         header?.addEventListener('mousedown', startDrag);
         document.addEventListener('mousemove', drag);

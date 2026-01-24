@@ -1378,6 +1378,29 @@ body::before {
 .terminal-minimize:hover { background: #ff9500; }
 .terminal-maximize { background: #27c93f; opacity: 0.4; cursor: default; }
 
+.terminal-exit {
+    width: auto;
+    height: auto;
+    padding: 2px 6px;
+    margin-left: auto;
+    background: #ff5f56;
+    color: var(--color-black);
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    line-height: 1;
+    border-radius: var(--radius-sm);
+}
+
+.terminal-exit:hover {
+    background: #ff3b30;
+}
+
+.terminal-exit:focus-visible {
+    outline: 2px solid var(--color-green);
+    outline-offset: 2px;
+}
+
 .terminal-title {
     font-family: var(--font-mono);
     font-size: 11px;
