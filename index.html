@@ -344,7 +344,23 @@
     <!-- Footer -->
     <footer class="footer" role="contentinfo">
         <div class="footer-wall">
-            <img src="assets/XR_logo.svg" alt="XR graffiti logo" class="footer-logo" onerror="this.style.display='none'">
+            <!-- Graffiti layer - decorative images positioned anywhere -->
+            <div class="graffiti-layer" aria-hidden="true">
+                <img class="graffiti" src="assets/XR_logo.svg" alt=""
+                     style="--x: 90%; --y: 50%; --s: 1.2; --r: -0deg; --o: 0.7; --z: 3; filter: drop-shadow(0 2px 4px var(--color-green-bright));">
+                <img class="graffiti" src="assets/XR_logo.svg" alt=""
+                     style="--x: 10%; --y: 10%; --s: 1.2; --r: -8deg; --o: 0.9; --z: 2;">
+                <img class="graffiti" src="assets/XR_logo1.svg" alt=""
+                     style="--x: 15%; --y: 45%; --s: 0.8; --r: -12deg; --o: 0.75; --z: 1;">
+                <!-- Add more graffiti images:
+                <img class="graffiti" src="assets/g2.png" alt=""
+                     style="--x: 50%; --y: 20%; --s: 1; --r: 3deg; --o: 0.85; --z: 3;">
+                -->
+            </div>
+
+            <!-- Green paint accents overlay -->
+            <div class="paint-accents" aria-hidden="true"></div>
+
             <div class="footer-content">
                 <div class="footer-socials">
                     <a href="https://github.com/EXARTeo" target="_blank" rel="noopener noreferrer" aria-label="GitHub">

@@ -1009,38 +1009,210 @@ body::before {
 }
 
 .footer-wall {
-    position: relative;
-    padding: var(--space-2xl) 0 var(--space-lg);
-    background:
-        linear-gradient(180deg, var(--color-bg) 0%, transparent 15%),
-        repeating-linear-gradient(90deg, #1a1a1a 0px, #1a1a1a 2px, #171717 2px, #171717 4px),
-        repeating-linear-gradient(0deg, #1a1a1a 0px, #1a1a1a 2px, #141414 2px, #141414 4px),
-        linear-gradient(135deg, #1c1c1c 25%, #191919 25%, #191919 50%, #1c1c1c 50%, #1c1c1c 75%, #191919 75%);
-    background-size: 100% 100%, 6px 6px, 6px 6px, 12px 12px;
+  --brick-w: 60px;
+  --brick-h: 25px;
+  --mortar: 3px;
+
+  --brick-dark: #0f0f0f;
+  --brick-mid:  #151515;
+  --brick-light:#1a1a1a;
+
+  --mortar-color: #0a0a0a;
+
+  position: relative;
+  min-height: 200px;
+
+  /* The last padding declaration wins */
+  padding: var(--space-3xl) 0 var(--space-xl);
+
+  /* === BRICK WALL PATTERN (CSS-only) === */
+  background:
+    /* Top fade from page bg */
+    linear-gradient(180deg, var(--color-bg) 0%, transparent 20%),
+
+    /* Vignette overlay */
+    radial-gradient(
+      ellipse 120% 100% at 50% 100%,
+      transparent 40%,
+      rgba(0, 0, 0, 0.6) 100%
+    ),
+
+    /* 3D lighting - light from top-left */
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.02) 0%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.15) 100%
+    ),
+
+    /* Horizontal mortar lines */
+    repeating-linear-gradient(
+      to bottom,
+      var(--mortar-color) 0px,
+      var(--mortar-color) var(--mortar),
+      transparent var(--mortar),
+      transparent var(--brick-h)
+    ),
+
+    /* Vertical mortar lines */
+    repeating-linear-gradient(
+      to right,
+      var(--mortar-color) 0px,
+      var(--mortar-color) var(--mortar),
+      transparent var(--mortar),
+      transparent var(--brick-w)
+    ),
+
+    /* Brick texture variation */
+    repeating-linear-gradient(
+      90deg,
+      var(--brick-dark) 0px,
+      var(--brick-mid) 20px,
+      var(--brick-light) 40px,
+      var(--brick-mid) 60px
+    ),
+
+    /* Base brick color */
+    var(--brick-mid);
+
+  background-size:
+    100% 100%,                 /* top fade */
+    100% 100%,                 /* vignette */
+    100% 100%,                 /* lighting */
+    100% var(--brick-h),       /* horizontal mortar */
+    var(--brick-w) var(--brick-h), /* vertical mortar */
+    120px 100%,                /* texture variation */
+    100% 100%;                 /* base */
+
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0;
 }
 
+/* Grain/noise texture overlay */
 .footer-wall::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.04;
     pointer-events: none;
+    z-index: 1;
 }
 
-.footer-logo {
+/* Brick edge shadows for depth */
+.footer-wall::after {
+    content: '';
     position: absolute;
-    top: var(--space-lg);
-    left: var(--space-lg);
-    width: 60px;
-    height: auto;
-    opacity: 0.85;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    inset: 0;
+    background:
+        /* Subtle inner shadow at edges */
+        linear-gradient(90deg, rgba(0,0,0,0.3) 0%, transparent 5%, transparent 95%, rgba(0,0,0,0.3) 100%),
+        /* Bottom shadow */
+        linear-gradient(0deg, rgba(0,0,0,0.4) 0%, transparent 30%);
+    pointer-events: none;
+    z-index: 1;
 }
 
+/* === GREEN PAINT ACCENTS === */
+.paint-accents {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    /* Sparse green paint spots on random bricks */
+    background:
+        /* Spot 1 - top left area */
+        radial-gradient(ellipse 25px 12px at 8% 25%, rgba(135, 207, 62, 0.12) 0%, transparent 70%),
+        /* Spot 2 - slight drip effect */
+        radial-gradient(ellipse 18px 30px at 15% 60%, rgba(135, 207, 62, 0.08) 0%, transparent 60%),
+        /* Spot 3 - middle area */
+        radial-gradient(ellipse 35px 15px at 42% 35%, rgba(135, 207, 62, 0.1) 0%, transparent 70%),
+        /* Spot 4 - right side */
+        radial-gradient(ellipse 20px 10px at 78% 45%, rgba(135, 207, 62, 0.09) 0%, transparent 65%),
+        /* Spot 5 - bottom right */
+        radial-gradient(ellipse 28px 14px at 88% 70%, rgba(135, 207, 62, 0.11) 0%, transparent 70%),
+        /* Spot 6 - scattered small */
+        radial-gradient(ellipse 12px 8px at 55% 75%, rgba(135, 207, 62, 0.07) 0%, transparent 60%),
+        /* Spot 7 - near center */
+        radial-gradient(ellipse 22px 10px at 35% 80%, rgba(135, 207, 62, 0.08) 0%, transparent 65%);
+}
+
+/* === GRAFFITI LAYER === */
+.graffiti-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    overflow: hidden;
+}
+
+.graffiti {
+    position: absolute;
+    /* Positioning via CSS custom properties */
+    left: var(--x, 50%);
+    top: var(--y, 50%);
+    transform: translate(-50%, -50%) rotate(var(--r, 0deg)) scale(var(--s, 1));
+    opacity: var(--o, 0.85);
+    z-index: var(--z, 1);
+
+    /* Sizing - responsive */
+    width: clamp(50px, 12vw, 100px);
+    height: auto;
+    max-width: 120px;
+
+    /* Realism */
+    filter:
+        drop-shadow(2px 3px 4px rgba(0, 0, 0, 0.6))
+        drop-shadow(0 0 8px rgba(135, 207, 62, 0.15));
+
+    /* Blend with wall - screen works well for spray paint look */
+    mix-blend-mode: screen;
+
+    /* Ensure no interaction */
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Fallback for browsers without mix-blend-mode support */
+@supports not (mix-blend-mode: screen) {
+    .graffiti {
+        opacity: calc(var(--o, 0.85) * 0.9);
+    }
+}
+
+/* === FOOTER CONTENT === */
 .footer-content {
     position: relative;
+    z-index: 10;
     text-align: center;
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+}
+
+/* Subtle dark panel behind content for readability */
+.footer-content::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(90%, 400px);
+    height: calc(100% + var(--space-xl));
+    background:
+        radial-gradient(ellipse 100% 100% at 50% 50%,
+            rgba(0, 0, 0, 0.5) 0%,
+            rgba(0, 0, 0, 0.3) 50%,
+            transparent 80%);
+    border-radius: var(--radius-lg);
+    pointer-events: none;
+    z-index: -1;
 }
 
 .footer-socials {
@@ -1054,32 +1226,57 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     color: var(--color-text);
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid var(--color-border);
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-md);
+    backdrop-filter: blur(4px);
     transition: all var(--transition-fast);
 }
 
 .footer-socials a:hover {
     color: var(--color-green);
     border-color: var(--color-green);
+    background: rgba(0, 0, 0, 0.7);
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(135, 207, 62, 0.2);
 }
 
 .footer-tagline {
     font-family: var(--font-mono);
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 500;
     color: var(--color-green);
     margin-bottom: var(--space-sm);
-    text-shadow: 0 0 20px var(--color-green-glow);
+    text-shadow:
+        0 0 20px rgba(135, 207, 62, 0.4),
+        0 2px 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 0.5px;
 }
 
 .footer-copy {
     font-size: 11px;
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* === FOOTER RESPONSIVE === */
+@media (max-width: 600px) {
+    .footer-wall {
+        --brick-w: 50px;
+        --brick-h: 22px;
+        padding: var(--space-2xl) 0 var(--space-lg);
+    }
+
+    .graffiti {
+        width: clamp(40px, 15vw, 80px);
+    }
+
+    .paint-accents {
+        opacity: 0.7;
+    }
 }
 
 /* ============================================
