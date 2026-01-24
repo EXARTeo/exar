@@ -504,6 +504,7 @@
         const header = $('#terminalHeader');
         const closeBtn = $('#terminalClose');
         const minimizeBtn = $('#terminalMinimize');
+        const hideBtn = $('#terminalHide');
         const exitBtn = $('#terminalExit');
         const output = $('#terminalOutput');
         const input = $('#terminalInput');
@@ -950,6 +951,7 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
         launcher?.addEventListener('click', openTerminal);
         closeBtn?.addEventListener('click', closeTerminal);
         minimizeBtn?.addEventListener('click', toggleMinimize);
+        hideBtn?.addEventListener('click', closeTerminal);
         exitBtn?.addEventListener('click', exitTerminal);
 
         header?.addEventListener('mousedown', startDrag);
