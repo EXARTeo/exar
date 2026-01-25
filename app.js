@@ -59,7 +59,7 @@
     // ============================================
 
     const FILESYSTEM = {
-        '/': { type: 'dir', children: ['home', 'timeline', 'featured', 'wins', 'skills', 'projects'] },
+        '/': { type: 'dir', children: ['home', 'timeline', 'featured', 'highlights', 'skills', 'projects'] },
         '/home': { type: 'dir', children: ['cv', 'social'] , navigate: { page:'index.html', hash:'#hero' } },
         '/home/cv': { type: 'dir', children: ['Exarchos_Theodoros_CV.pdf'] , navigate: { page:'index.html', hash:'#hero' } },
         '/home/cv/Exarchos_Theodoros_CV.pdf': { type: 'file', action: 'download_cv' },
@@ -71,7 +71,7 @@
         '/featured': { type: 'dir', children: ['nfs', 'neural-lsh'] , navigate: { page: 'index.html', hash:'#featured' } },
         '/featured/nfs': { type: 'dir', children: [], navigate: { page: 'index.html', hash: '#project-nfs' } },
         '/featured/neural-lsh': { type: 'dir', children: [], navigate: { page: 'index.html', hash: '#project-neural-lsh' } },
-        '/wins': { type: 'dir', children: [], navigate: { page: 'index.html', hash: '#wins' } },
+        '/highlights': { type: 'dir', children: [], navigate: { page: 'index.html', hash: '#highlights' } },
         '/skills': { type: 'dir', children: [], navigate: { page: 'index.html', hash: '#skills' } },
         '/projects': { type: 'dir', children: [], navigate: { page: 'projects.html', hash: '' } }
     };

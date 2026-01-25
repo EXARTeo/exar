@@ -176,6 +176,14 @@ body::before {
     text-decoration: none;
     letter-spacing: -0.3px;
 }
+/* Maybe an other time =-( */
+/* .nav-logo-img {
+    filter: drop-shadow(0 2px 4px var(--color-green-bright));
+    display: block;
+    height: 50px;
+    width: auto;
+} */
+
 
 .logo-dot {
     width: 6px;
@@ -893,20 +901,20 @@ body::before {
 }
 
 /* ============================================
-   WINS
+   HIGHLIGHTS
    ============================================ */
 
-.wins-section {
+.highlights-section {
     padding: var(--space-3xl) 0;
 }
 
-.wins-grid {
+.highlights-grid {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
 }
 
-.win-card {
+.highlight-card {
     display: flex;
     gap: var(--space-md);
     background: var(--color-bg-card);
@@ -915,7 +923,7 @@ body::before {
     padding: var(--space-lg);
 }
 
-.win-badge {
+.highlight-badge {
     flex-shrink: 0;
     width: 36px;
     height: 36px;
@@ -927,21 +935,21 @@ body::before {
     color: var(--color-green);
 }
 
-.win-title {
+.highlight-title {
     font-size: 14px;
     font-weight: 600;
     color: var(--color-white);
     margin-bottom: 2px;
 }
 
-.win-subtitle {
+.highlight-subtitle {
     font-size: 11px;
     color: var(--color-green);
     font-weight: 500;
     margin-bottom: var(--space-sm);
 }
 
-.win-desc {
+.highlight-desc {
     font-size: 12px;
     color: var(--color-text-secondary);
     line-height: 1.5;
