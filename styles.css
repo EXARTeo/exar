@@ -1355,6 +1355,38 @@ body::before {
     height: auto !important;
 }
 
+/* Resize handle */
+.terminal-resize-handle {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 16px;
+    height: 16px;
+    cursor: nwse-resize;
+    z-index: 10;
+}
+
+.terminal-resize-handle::before {
+    content: '';
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--color-text-muted);
+    border-bottom: 2px solid var(--color-text-muted);
+    opacity: 0.5;
+    transition: opacity var(--transition-fast);
+}
+
+.terminal-resize-handle:hover::before {
+    opacity: 1;
+}
+
+.terminal-window.minimized .terminal-resize-handle {
+    display: none;
+}
+
 .terminal-header {
     display: flex;
     align-items: center;

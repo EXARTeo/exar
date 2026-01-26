@@ -29,6 +29,7 @@
         storage: {
             terminalOpen: 'term_open',
             terminalPos: 'term_pos',
+            terminalSize: 'term_size',
             terminalCwd: 'term_cwd',
             terminalHistory: 'term_history',
             terminalOutput: 'term_output',
@@ -517,8 +518,20 @@
         let commandHistory = [];
         let historyIndex = -1;
         let isDragging = false;
+        let isResizing = false;
         let dragOffset = { x: 0, y: 0 };
+        let resizeStart = { x: 0, y: 0, w: 0, h: 0 };
         let cwd = '/';
+
+        // Size constraints
+        const MIN_WIDTH = 320;
+        const MIN_HEIGHT = 220;
+
+        // Create resize handle
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'terminal-resize-handle';
+        resizeHandle.setAttribute('aria-label', 'Resize terminal');
+        terminal.appendChild(resizeHandle);
 
         // Generate directory tree for help
         function generateTree() {
@@ -880,6 +893,71 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
             savePosition();
         }
 
+        // Resize functionality
+        function startResize(e) {
+            if (terminal.classList.contains('minimized')) return;
+            e.preventDefault();
+            e.stopPropagation();
+            isResizing = true;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            resizeStart.x = clientX;
+            resizeStart.y = clientY;
+            resizeStart.w = terminal.offsetWidth;
+            resizeStart.h = terminal.offsetHeight;
+            terminal.style.transition = 'none';
+        }
+
+        function resize(e) {
+            if (!isResizing) return;
+            e.preventDefault();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+            let newWidth = resizeStart.w + (clientX - resizeStart.x);
+            let newHeight = resizeStart.h + (clientY - resizeStart.y);
+
+            // Clamp to min size
+            newWidth = Math.max(MIN_WIDTH, newWidth);
+            newHeight = Math.max(MIN_HEIGHT, newHeight);
+
+            // Clamp to viewport (respect existing max constraints)
+            const rect = terminal.getBoundingClientRect();
+            const maxWidth = window.innerWidth - rect.left - 16;
+            const maxHeight = window.innerHeight - rect.top - 16;
+            newWidth = Math.min(newWidth, maxWidth);
+            newHeight = Math.min(newHeight, maxHeight);
+
+            terminal.style.width = `${newWidth}px`;
+            terminal.style.height = `${newHeight}px`;
+        }
+
+        function endResize() {
+            if (!isResizing) return;
+            isResizing = false;
+            terminal.style.transition = '';
+            saveSize();
+            ensureInViewport();
+        }
+
+        function ensureInViewport() {
+            const rect = terminal.getBoundingClientRect();
+            let x = rect.left;
+            let y = rect.top;
+            const maxX = window.innerWidth - terminal.offsetWidth;
+            const maxY = window.innerHeight - terminal.offsetHeight;
+
+            if (x > maxX || y > maxY || x < 0 || y < 0) {
+                x = Math.max(0, Math.min(x, maxX));
+                y = Math.max(0, Math.min(y, maxY));
+                terminal.style.left = `${x}px`;
+                terminal.style.top = `${y}px`;
+                terminal.style.right = 'auto';
+                terminal.style.bottom = 'auto';
+                savePosition();
+            }
+        }
+
         // Persistence
         function saveOutput() {
             localStorage.setItem(CONFIG.storage.terminalOutput, output.innerHTML);
@@ -893,6 +971,13 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
         function savePosition() {
             const rect = terminal.getBoundingClientRect();
             localStorage.setItem(CONFIG.storage.terminalPos, JSON.stringify({ left: rect.left, top: rect.top }));
+        }
+
+        function saveSize() {
+            localStorage.setItem(CONFIG.storage.terminalSize, JSON.stringify({
+                width: terminal.offsetWidth,
+                height: terminal.offsetHeight
+            }));
         }
 
         function loadState() {
@@ -918,13 +1003,33 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
                 output.innerHTML = savedOutput;
             }
 
+            // Load size
+            try {
+                const savedSize = localStorage.getItem(CONFIG.storage.terminalSize);
+                if (savedSize) {
+                    const size = JSON.parse(savedSize);
+                    // Clamp to current viewport
+                    const maxWidth = window.innerWidth - 32;
+                    const maxHeight = window.innerHeight - 100;
+                    const width = Math.min(Math.max(MIN_WIDTH, size.width), maxWidth);
+                    const height = Math.min(Math.max(MIN_HEIGHT, size.height), maxHeight);
+                    terminal.style.width = `${width}px`;
+                    terminal.style.height = `${height}px`;
+                }
+            } catch (e) {}
+
             // Load position
             try {
                 const savedPos = localStorage.getItem(CONFIG.storage.terminalPos);
                 if (savedPos) {
                     const pos = JSON.parse(savedPos);
-                    terminal.style.left = `${pos.left}px`;
-                    terminal.style.top = `${pos.top}px`;
+                    // Clamp position to ensure terminal stays in viewport
+                    const maxX = window.innerWidth - terminal.offsetWidth;
+                    const maxY = window.innerHeight - terminal.offsetHeight;
+                    const x = Math.max(0, Math.min(pos.left, maxX));
+                    const y = Math.max(0, Math.min(pos.top, maxY));
+                    terminal.style.left = `${x}px`;
+                    terminal.style.top = `${y}px`;
                     terminal.style.right = 'auto';
                     terminal.style.bottom = 'auto';
                 } else {
@@ -960,6 +1065,13 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
         header?.addEventListener('touchstart', startDrag, { passive: true });
         document.addEventListener('touchmove', drag, { passive: false });
         document.addEventListener('touchend', endDrag);
+
+        resizeHandle.addEventListener('mousedown', startResize);
+        document.addEventListener('mousemove', resize);
+        document.addEventListener('mouseup', endResize);
+        resizeHandle.addEventListener('touchstart', startResize, { passive: false });
+        document.addEventListener('touchmove', resize, { passive: false });
+        document.addEventListener('touchend', endResize);
 
         input?.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -1022,6 +1134,13 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
                 }
             }
         });
+
+        // Handle window resize
+        window.addEventListener('resize', debounce(() => {
+            if (terminal.classList.contains('open') && !terminal.classList.contains('minimized')) {
+                ensureInViewport();
+            }
+        }, 100));
 
         loadState();
         output.scrollTop = output.scrollHeight;
