@@ -1494,6 +1494,16 @@ body::before {
 .terminal-output .link { color: var(--color-green); text-decoration: underline; cursor: pointer; }
 .terminal-output .ascii { color: var(--color-green); }
 
+.terminal-output .tree {
+    margin: 0;
+    white-space: pre;
+    overflow-x: auto;
+    letter-spacing: 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
 .terminal-input-line {
     display: flex;
     align-items: center;

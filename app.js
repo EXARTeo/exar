@@ -527,6 +527,10 @@
         const MIN_WIDTH = 320;
         const MIN_HEIGHT = 220;
 
+        // CSS default size (must match styles.css .terminal-window)
+        const DEFAULT_WIDTH = 480;
+        const DEFAULT_HEIGHT = 320;
+
         // Create resize handle
         const resizeHandle = document.createElement('div');
         resizeHandle.className = 'terminal-resize-handle';
@@ -598,26 +602,23 @@
             help: () => {
                 return `
 <span class="info">Directory Structure:</span>
-${generateTree()}
-
+<pre class="tree">${generateTree()}</pre>
 
 <span class="info">Available commands:</span>
-
-  help              Show this help message
+<pre class="tree">  help              Show this help message
   ls [path]         List directory contents
-  cd <path>         Change directory / navigate
-  cat <file>        Display file contents
+  cd &lt;path&gt;         Change directory / navigate
+  cat &lt;file&gt;        Display file contents
   pwd               Print working directory
   whoami            Display identity info
   social            Show social links
   skills            Display skills summary
   date              Print current date/time
   wget cv           Download CV
-  open <target>     Open github|linkedin|instagram|email
+  open &lt;target&gt;     Open github|linkedin|instagram|email
   banner            Show ASCII banner
   clear             Clear terminal output
-  exit              Close terminal
-
+  exit              Close terminal</pre>
 `;
             },
 
@@ -876,6 +877,14 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
             localStorage.setItem(CONFIG.storage.terminalOpen, 'false');
         }
 
+        function resetTerminalSize() {
+            // Reset to CSS default size
+            terminal.style.width = `${DEFAULT_WIDTH}px`;
+            terminal.style.height = `${DEFAULT_HEIGHT}px`;
+            // Remove persisted size so next open starts at default
+            localStorage.removeItem(CONFIG.storage.terminalSize);
+        }
+
         function exitTerminal() {
             // Clear terminal DOM output
             output.innerHTML = '';
@@ -888,6 +897,9 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
 
             // Reset minimized state visually
             terminal.classList.remove('minimized');
+
+            // Reset size to default
+            resetTerminalSize();
 
             // Clear localStorage keys (keep position)
             localStorage.removeItem(CONFIG.storage.terminalOutput);
@@ -1102,9 +1114,9 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
 
         // Event listeners
         launcher?.addEventListener('click', openTerminal);
-        closeBtn?.addEventListener('click', closeTerminal);
+        closeBtn?.addEventListener('click', exitTerminal);  // (X || red) button == full reset
         minimizeBtn?.addEventListener('click', toggleMinimize);
-        hideBtn?.addEventListener('click', closeTerminal);
+        hideBtn?.addEventListener('click', closeTerminal);  // Hide == close only, no reset
         exitBtn?.addEventListener('click', exitTerminal);
 
         header?.addEventListener('mousedown', startDrag);
