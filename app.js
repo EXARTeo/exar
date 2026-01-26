@@ -535,24 +535,73 @@
 
         // Generate directory tree for help
         function generateTree() {
+            // Build a hierarchical tree from FILESYSTEM paths
+            const root = { name: '/', path: '/', type: 'dir', children: new Map() };
+
+            for (const [path, meta] of Object.entries(FILESYSTEM)) {
+                if (path === '/') continue;
+
+                const parts = path.split('/').filter(Boolean);
+                let node = root;
+
+                for (let i = 0; i < parts.length; i++) {
+                const part = parts[i];
+                const childPath = '/' + parts.slice(0, i + 1).join('/');
+
+                if (!node.children.has(part)) {
+                    // Prefer explicit type from FILESYSTEM, fallback to dir when missing
+                    const childMeta = FILESYSTEM[childPath];
+                    const type = childMeta?.type ?? (i < parts.length - 1 ? 'dir' : meta.type);
+
+                    node.children.set(part, {
+                    name: part,
+                    path: childPath,
+                    type,
+                    children: new Map()
+                    });
+                }
+
+                node = node.children.get(part);
+                }
+            }
+
+            // Sort: dirs first, then files; both alphabetically
+            const sortChildren = (node) =>
+                Array.from(node.children.values()).sort((a, b) => {
+                if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
+                return a.name.localeCompare(b.name);
+                });
+
             const lines = ['/'];
-            const dirs = Object.keys(FILESYSTEM).filter(p => p !== '/').sort();
 
-            dirs.forEach((path, i) => {
-                const depth = path.split('/').length - 1;
-                const name = path.split('/').pop();
-                const isLast = i === dirs.length - 1 || !dirs[i + 1]?.startsWith(path.substring(0, path.lastIndexOf('/') + 1));
-                const prefix = '  '.repeat(depth - 1) + (isLast ? '└── ' : '├── ');
-                lines.push(prefix + name + (FILESYSTEM[path].type === 'dir' ? '/' : ''));
-            });
+            function walk(node, prefix) {
+                const children = sortChildren(node);
 
+                children.forEach((child, idx) => {
+                const isLast = idx === children.length - 1;
+                const branch = isLast ? '└── ' : '├── ';
+
+                lines.push(prefix + branch + child.name + (child.type === 'dir' ? '/' : ''));
+
+                const nextPrefix = prefix + (isLast ? '    ' : '│   ');
+                if (child.type === 'dir') walk(child, nextPrefix);
+                });
+            }
+
+            walk(root, '');
             return lines.join('\n');
-        }
+            }
+
 
         // Commands
         const commands = {
             help: () => {
-                return `<span class="info">Available commands:</span>
+                return `
+<span class="info">Directory Structure:</span>
+${generateTree()}
+
+
+<span class="info">Available commands:</span>
 
   help              Show this help message
   ls [path]         List directory contents
@@ -569,8 +618,7 @@
   clear             Clear terminal output
   exit              Close terminal
 
-<span class="info">Directory Structure:</span>
-${generateTree()}`;
+`;
             },
 
             ls: (args) => {
