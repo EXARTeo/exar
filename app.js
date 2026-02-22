@@ -266,12 +266,19 @@
 
             currentIndex++;
 
-            setTimeout(() => {
+            let cleaned = false;
+            const cleanup = () => {
+                if (cleaned) return;
+                cleaned = true;
+                card.style.display = 'none'; // pull out of layout immediately so it can't contribute to overflow
                 updateStackStyles();
                 if (currentIndex >= cards.length && resetBtn) {
                     resetBtn.hidden = false;
                 }
-            }, 250);
+            };
+
+            card.addEventListener('transitionend', cleanup, { once: true });
+            setTimeout(cleanup, 350); // fallback for reduced-motion or interrupted transitions
         }
 
         function initDragHandlers() {
@@ -1114,6 +1121,7 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
 
         // Event listeners
         launcher?.addEventListener('click', openTerminal);
+        $('#heroTerminalBtn')?.addEventListener('click', openTerminal);
         closeBtn?.addEventListener('click', exitTerminal);  // (X || red) button == full reset
         minimizeBtn?.addEventListener('click', toggleMinimize);
         hideBtn?.addEventListener('click', closeTerminal);  // Hide == close only, no reset

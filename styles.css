@@ -83,6 +83,7 @@
 html {
     scroll-behavior: smooth;
     scroll-padding-top: calc(var(--nav-height) + var(--space-lg));
+    overflow-x: clip; /* contain card fly-off; clip ≠ hidden: no scroll container, position:fixed unaffected */
 }
 
 body {
@@ -353,6 +354,20 @@ body::before {
 .btn-secondary:hover {
     border-color: var(--color-green);
     color: var(--color-green);
+}
+
+.btn-terminal {
+    background: transparent;
+    color: var(--color-green);
+    border: 1px solid var(--color-green);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.btn-terminal:hover {
+    background: var(--color-green-glow);
+    box-shadow: 0 0 14px var(--color-green-glow);
+    transform: translateY(-1px);
 }
 
 /* ============================================
