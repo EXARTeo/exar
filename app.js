@@ -38,7 +38,7 @@
         },
         socials: {
             github: 'https://github.com/EXARTeo',
-            linkedin: 'https://www.linkedin.com/in/θεόδωρος-έξαρχος-08a770391/',
+            linkedin: 'https://www.linkedin.com/in/theodoros-exarchos-08a770391/',
             instagram: 'https://instagram.com/exartheo',
             email: 'exarchtheo@gmail.com'
         }
@@ -775,7 +775,7 @@ Full-Stack Developer & Informatics Student
                 return `<span class="info">Social Links:</span>
 
 GitHub:    <span class="link" data-url="${CONFIG.socials.github}">github.com/EXARTeo</span>
-LinkedIn:  <span class="link" data-url="${CONFIG.socials.linkedin}">linkedin.com/in/θεόδωρος-έξαρχος-08a770391</span>
+LinkedIn:  <span class="link" data-url="${CONFIG.socials.linkedin}">linkedin.com/in/theodoros-exarchos-08a770391</span>
 Instagram: <span class="link" data-url="https://${CONFIG.socials.instagram.replace('https://', '')}">@exartheo</span>
 Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG.socials.email}</span>`;
             },
@@ -1261,6 +1261,9 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
     // ============================================
 
     function init() {
+        const yearEl = $('#copyrightYear');
+        if (yearEl) yearEl.textContent = new Date().getFullYear();
+
         initNavigation();
         initPhotoDeck();
         initTimeline();
