@@ -22,7 +22,7 @@
             apiBase: 'https://api.github.com',
             featuredRepos: [
                 { full_name: 'EXARTeo/Network_File_System-NFS', name: 'Network_File_System-NFS', description: 'C client/server file system over TCP sockets' },
-                { full_name: 'EXARTeo/Neural-LSH', name: 'Neural-LSH', description: 'Python/PyTorch ANN index pipeline' }
+                { full_name: 'EXARTeo/Remote-Homology-Search-with-Approximate-Methods-ESM-2', name: 'Remote-Homology-Search-with-Approximate-Methods-ESM-2', description: 'Remote homology search using ESM-2 embeddings with approximate nearest-neighbor methods' }
             ]
         },
         photos: ['assets/me1.jpg', 'assets/me2.jpg', 'assets/me3.jpg'],
@@ -503,6 +503,34 @@
     }
 
     // ============================================
+    // PROJECTS CATEGORY TOGGLE
+    // ============================================
+
+    function initProjectsToggle() {
+        const toggleBtns = $$('.projects-toggle .toggle-btn');
+        const views = $$('.projects-view');
+        if (!toggleBtns.length) return;
+
+        function switchCategory(category) {
+            toggleBtns.forEach(b => {
+                b.classList.toggle('active', b.dataset.category === category);
+                b.setAttribute('aria-selected', b.dataset.category === category);
+            });
+            views.forEach(v => {
+                v.classList.remove('active');
+                if (v.dataset.projects === category) {
+                    void v.offsetWidth;
+                    v.classList.add('active');
+                }
+            });
+        }
+
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => switchCategory(btn.dataset.category));
+        });
+    }
+
+    // ============================================
     // TERMINAL WIDGET
     // ============================================
 
@@ -621,6 +649,7 @@
   social            Show social links
   skills            Display skills summary
   date              Print current date/time
+  awards            List hackathon victories
   wget cv           Download CV
   open &lt;target&gt;     Open github|linkedin|instagram|email
   banner            Show ASCII banner
@@ -806,6 +835,19 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
             exit: () => {
                 exitTerminal();
                 return null;
+            },
+
+            awards: () => {
+                return `<span class="info">Awards & Hackathon Victories:</span>
+
+<span class="cmd"> 1.</span> <span style="color:#ffd700;">AI Hackathon 2026</span> — 1st Place, Open Track
+    Project: <span class="link" data-url="https://crowdless.gr">Crowdless</span> — decentralized AI for urban overcrowding prevention
+
+<span class="cmd"> 2.</span> <span style="color:#ffd700;">Cassini Hackathon 2025</span> — 1st Place, Greece
+    Project: <span class="link" data-url="https://crowdless.gr">Crowdless</span> — space-data driven overcrowding solution
+
+<span class="cmd"> 3.</span> <span style="color:#ffd700;">Gen AI Summit Hackathon 2025</span> — 1st Place
+    Project: Review clustering MVP — AI-powered app review analysis`;
             },
 
             // Easter eggs
@@ -1230,6 +1272,7 @@ Email:     <span class="link" data-url="mailto:${CONFIG.socials.email}">${CONFIG
 
         if ($('#reposGrid')) {
             initReposPage();
+            initProjectsToggle();
         }
     }
 
