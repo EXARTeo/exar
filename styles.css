@@ -812,11 +812,13 @@ body::before {
 }
 
 .project-card {
+    position: relative;
     background: var(--color-bg-card);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     padding: var(--space-lg);
     transition: all var(--transition-fast);
+    cursor: pointer;
 }
 
 .project-card:hover {
@@ -839,6 +841,13 @@ body::before {
     color: var(--color-text-muted);
     padding: 4px;
     transition: color var(--transition-fast);
+}
+
+.project-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
 }
 
 .project-link:hover {
